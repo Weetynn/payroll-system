@@ -1,12 +1,16 @@
 # Payroll Redefined: A Complete Guide to Automated Salary Management
 
-## 📚 Introduction
+## Introduction
 
 The Payroll Management System is a Python-based application developed to streamline payroll processes within organizations by automating essential tasks related to employee compensation. Designed with a modular structure, the system provides functionalities for managing employee profiles, calculating salaries, generating payslips, and maintaining accurate records. By integrating business rules directly into the system, it ensures data consistency, automates salary adjustments based on predefined criteria, and reduces the manual workload for Human Resources teams.
 
-## 📋 Key Areas of Discussion
+## Key Areas of Discussion
 
-### Section 1: Task Overview
+<div align="center">
+
+### Section 1: Task Overview ✍️
+
+</div>
 
 #### 📌 System Design and Interface:
 
@@ -63,7 +67,12 @@ The Payroll Management System is a Python-based application developed to streaml
     ▪️ Run extensive testing, covering valid, boundary, and error cases, with screenshots for demonstration.
 
 ---
-### Section 2: System Assumptions and Constraints
+
+<div align="center">
+    
+### Section 2: System Assumptions & Constraints 🔐
+
+</div>
 
     ▪️ Each employee has a unique ID in the format "TP00001" to "TP99999," stored as a string.
     
@@ -85,9 +94,14 @@ The Payroll Management System is a Python-based application developed to streaml
 
 ---
 
-### Section 3: Proposed Improvements
+<div align="center">
+
+### Section 3: Proposed Improvements 🛠️
+
+</div>
 
     ▪️ Implement a delete payslip procedure to remove individual payslips.
     
     ▪️ Refine the viewEmployee function by ordering records for easier access.
 
+---
