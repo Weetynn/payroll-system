@@ -6,31 +6,30 @@ The Payroll Management System is a Python-based application developed to streaml
 
 ## 📋 Task Overview
 
-#### 📌 Main Program and Interface Design:
+#### 📌 System Design and Interface:
 
-    ▪️ Develop a structured Main Menu to facilitate navigation across system functions.
+    ▪️ Design a Main Menu to navigate the system, with clear options for employee and payslip management.
     
-    ▪️ Implement submenus for managing employee profiles and payslips, allowing user access to specific operations like adding, updating, and deleting records.
-    
+    ▪️ Implement submenus for both employee profiles and payslips, with a consistent and intuitive layout.
+
 
 #### 📌 Employee Record Management:
 
-    ▪️ Create functionality for adding new employees, including essential details such as Employee ID, name, department, and salary components.
+    ▪️ Add Employee: Collect employee ID, name, department, and salary components; validate input types.
     
-    ▪️ Include procedures to view, update, and delete employee information.
+    ▪️ Update Employee: Allow updates to employee details and monthly payslip information, with ID and date checks.
 
-    ▪️ Ensure data validation for employee details, ensuring consistency and accuracy.
+    ▪️ View Employee: Display a list of all employees in a formatted table.
 
+    ▪️ Delete Employee: Fully remove employee details, including associated payslips.
 
 #### 📌 Salary and Payslip Management:
 
-    ▪️ Develop a procedure to generate payslips, calculating net salary based on defined components (basic salary, allowance, bonus, overtime).
+    ▪️ Generate Net Salary: Apply rules for calculating net salary, including EPF, bonuses, and tax based on thresholds.
     
-    ▪️ Implement rules for EPF deduction and additional adjustments (5% bonus for gross salaries below RM2000; 6% tax for gross salaries above RM3000).
+    ▪️ Payslip Generation: Allow calculation of monthly salary, including a quick calculation option that does not save data.
 
-    ▪️ Enable functionality to view and search specific payslips by employee ID, month, and year.
-
-    ▪️ Provide a consolidated view for all payslips of a specified employee, organized by year.
+    ▪️ View and Search Payslip: Implement functions to view payslips for specific months or an entire year, organizing data by employee ID.
 
 
 #### 📌 Data Storage and Persistence:
@@ -47,19 +46,16 @@ The Payroll Management System is a Python-based application developed to streaml
 
 #### 📌 Additional Functionalities:
 
-    ▪️ Include an error-handling feature to manage non-existent records during employee and payslip searches.
-    
-    ▪️ Design procedures for quick and temporary net salary calculations without saving the data.
+    ▪️ Error handling for non-existent records or invalid inputs, providing clear feedback for re-entry.
     
 
-#### 📌 Exit Procedure:
+#### 📌 EExit Protocol:
 
     ▪️ Ensure the program has a clear exit procedure that saves any pending changes to employee and payslip data.
 
 
 #### 📌 Documentation and Testing:
 
-    ▪️ Document each function and procedure, including pseudocode for logical flow and explanations.
+    ▪️ Document assumptions, functions, and design decisions (including pseudocode).
     
-    ▪️ Test the system thoroughly using sample inputs, capturing valid and invalid inputs to demonstrate functionality and error handling.
-
+    ▪️ Run extensive testing, covering valid, boundary, and error cases, with screenshots for demonstration.
