@@ -4,7 +4,9 @@
 
 The Payroll Management System is a Python-based application developed to streamline payroll processes within organizations by automating essential tasks related to employee compensation. Designed with a modular structure, the system provides functionalities for managing employee profiles, calculating salaries, generating payslips, and maintaining accurate records. By integrating business rules directly into the system, it ensures data consistency, automates salary adjustments based on predefined criteria, and reduces the manual workload for Human Resources teams.
 
-## 📋 Task Overview
+## 📋 Key Areas of Discussion
+
+### Section 1: Task Overview
 
 #### 📌 System Design and Interface:
 
@@ -60,7 +62,30 @@ The Payroll Management System is a Python-based application developed to streaml
     
     ▪️ Run extensive testing, covering valid, boundary, and error cases, with screenshots for demonstration.
 
-## 💡 Proposed Improvements
+---
+### Section 2: System Assumptions and Constraints
+
+    ▪️ Each employee has a unique ID in the format "TP00001" to "TP99999," stored as a string.
+    
+    ▪️ The system can manage up to 99,999 employees.
+
+    ▪️ Gross salary is calculated as (Basic Salary + Allowance + Bonus + Overtime) with an 11% EPF deduction.
+    
+    ▪️ Net salary adjustments: 5% bonus for gross salaries under RM2000; 6% tax for gross salaries over RM3000; no adjustments for salaries between RM2000 and RM3000.
+
+    ▪️ All salary values are assumed accurate, treated as amounts in Ringgit Malaysia (RM).
+
+    ▪️ Employee and payslip data are stored in employees.json and payslips.json files.
+
+    ▪️ The system is designed for single-user operation with no concurrent access.
+
+    ▪️ No security features are assumed, such as authentication or malicious input handling.
+
+    ▪️ "Function" and "Procedure" terms are used to distinguish tasks that return results from those that do not.
+
+---
+
+### Section 3: Proposed Improvements
 
     ▪️ Implement a delete payslip procedure to remove individual payslips.
     
