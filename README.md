@@ -49,7 +49,7 @@ The Payroll Management System is a Python-based application developed to streaml
     ▪️ Error handling for non-existent records or invalid inputs, providing clear feedback for re-entry.
     
 
-#### 📌 EExit Protocol:
+#### 📌 Exit Protocol:
 
     ▪️ Ensure the program has a clear exit procedure that saves any pending changes to employee and payslip data.
 
@@ -59,3 +59,10 @@ The Payroll Management System is a Python-based application developed to streaml
     ▪️ Document assumptions, functions, and design decisions (including pseudocode).
     
     ▪️ Run extensive testing, covering valid, boundary, and error cases, with screenshots for demonstration.
+
+## 💡 Proposed Improvements
+
+    ▪️ Implement a delete payslip procedure to remove individual payslips.
+    
+    ▪️ Refine the viewEmployee function by ordering records for easier access.
+
