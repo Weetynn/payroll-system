@@ -1,0 +1,587 @@
+---------------------------------------PROCEDURE loadData-----------------------------------------
+
+PROCEDURE loadData()
+BEGIN
+    GLOBAL employees, payslips
+
+    IF 'employees.json' file EXISTS THEN
+        OPEN 'employees.json' file for reading AS f
+        READ data from 'employees.json' file and LOAD into employees dictionary using JSON format
+        CLOSE 'employees.json' file
+    END IF
+
+    IF 'payslips.json' file EXISTS THEN
+        OPEN 'payslips.json' file for reading AS f
+        READ data from 'payslips.json' file and LOAD into payslips dictionary using JSON format
+        CLOSE 'payslips.json' file
+    END IF
+END PROCEDURE
+
+
+---------------------------------------PROCEDURE saveData-----------------------------------------
+
+PROCEDURE saveData()
+BEGIN
+    GLOBAL employees, payslips
+    
+    OPEN 'employees.json' file for writing AS f
+    WRITE the current state of employees dictionary to 'employees.json' file using JSON format
+    CLOSE 'employees.json' file
+
+    OPEN 'payslips.json' file for writing AS f
+    WRITE the current state of payslips dictionary to 'payslips.json' file using JSON format
+    CLOSE 'payslips.json' file
+END PROCEDURE
+
+-------------------------------------FUNCTION promptIntegerInput----------------------------------
+
+FUNCTION promptIntegerInput(action)
+BEGIN
+    LOOP indefinitely
+        TRY
+            PROMPT user for input with message specified by action
+            CONVERT user input to an integer and STORE in number
+            
+            IF number < 0 THEN
+                PRINT "Invalid input. Please ensure that input is a non-negative number."
+                CONTINUE to the next iteration of the loop
+            END IF
+
+            RETURN number as valid input
+        CATCH ValueError
+            PRINT "Invalid input. Please reenter a valid number."
+        END TRY
+    END LOOP
+END FUNCTION
+
+
+-------------------------------------FUNCTION promptFloatInput----------------------------------
+
+FUNCTION promptFloatInput(action)
+BEGIN
+    LOOP indefinitely
+        TRY
+            PROMPT user for input with message specified by action
+            CONVERT user input to a float and STORE in number
+            
+            IF number < 0 THEN
+                PRINT "Invalid input. Please ensure that input is a non-negative number."
+                CONTINUE to the next iteration of the loop
+            END IF
+
+            RETURN number as valid input
+        CATCH ValueError
+            PRINT "Invalid input. Please reenter a valid number."
+        END TRY
+    END LOOP
+END FUNCTION
+
+
+------------------------------------FUNCTION promptStringsInput----------------------------------
+
+FUNCTION promptStringsInput(action)
+BEGIN
+    LOOP indefinitely
+        PROMPT user for input with message specified by action and STORE in string
+        
+        IF string contains characters other than alphabetic letters and spaces THEN
+            PRINT "Invalid input. The string must contain only letters and spaces."
+            CONTINUE to the next iteration of the loop
+        END IF
+
+        RETURN string as valid input
+    END LOOP
+END FUNCTION
+
+
+------------------------------------FUNCTION promptEmpIDInput------------------------------------
+
+FUNCTION promptEmpIDInput(prompt_text = "Enter Employee ID (e.g., 'TP00001')")
+BEGIN
+    LOOP indefinitely
+        PROMPT user for Employee ID with message specified by prompt_text
+        REMOVE extra spaces, CONVERT input to uppercase, and STORE in empID
+        
+        IF empID starts with "TP" AND length of empID is 7 AND last 5 characters are digits THEN
+            RETURN empID as valid input
+        ELSE
+            PRINT "Invalid Employee ID format. Please enter an ID in the format 'TP00001', 'TP00002', etc."
+        END IF
+    END LOOP
+END FUNCTION
+
+
+----------------------------------------PROCEDURE updateEmployee------------------------------------
+
+PROCEDURE updateEmployee(empID = None, year = None, month = None)
+BEGIN
+    GLOBAL employees, payslips
+
+    IF empID is not provided THEN
+        PROMPT user for Employee ID using standardized input function
+        STORE result in empID
+    END IF
+
+    IF month is not provided THEN
+        PROMPT user for month input and capitalize it
+        DEFINE valid_months as a list of month names
+        WHILE month is not in valid_months DO
+            PRINT "Invalid month. Please enter a valid month name."
+            PROMPT user again for month input and capitalize it
+        END WHILE
+    END IF
+
+    IF year is not provided THEN
+        PROMPT user for year input
+        WHILE year is not a 4-digit number DO
+            PRINT "Invalid year. Please enter a 4-digit year."
+            PROMPT user again for year input
+        END WHILE
+        CONVERT year to integer and STORE in year
+    END IF
+
+    IF empID, year, or month record is not found in payslips THEN
+        PRINT "No payslip record found for specified month and year."
+        RETURN from procedure without proceeding
+    END IF
+
+    PRINT "Existing Payslip Data for Reference"
+    DISPLAY existing payslip data in a table format for user reference
+
+    PROMPT user for updated Basic Salary Amount and STORE in basicSalary
+    PROMPT user for updated Allowance Amount and STORE in allowance
+    PROMPT user for updated Bonus Amount and STORE in bonus
+    PROMPT user for updated Overtime Amount and STORE in overtime
+
+    CALCULATE net salary and other salary components using calculateNetSalary function
+    STORE result in salaryDetails
+
+    DISPLAY updated details in a table format for user confirmation
+
+    PROMPT user for confirmation to overwrite the existing payslip details
+    IF confirmation is not 'yes' THEN
+        PRINT "Employee update was canceled. No changes were saved."
+        RETURN from procedure without saving changes
+    END IF
+
+    UPDATE payslips dictionary with new salaryDetails for empID, year, and month
+
+    CALL saveData procedure to persist updated information to JSON files
+
+    PRINT "Employee data has been successfully updated."
+END PROCEDURE
+
+
+----------------------------------------PROCEDURE addEmployee---------------------------------------
+
+PROCEDURE addEmployee()
+BEGIN
+    GLOBAL employees, payslips
+
+    PROMPT user for Employee ID using standardized input function and STORE in empID
+
+    IF empID exists in employees dictionary THEN
+        PRINT "This Employee ID already exists. Adding a new payslip record for this employee."
+        RETRIEVE employeeName and departmentName from existing employee record
+    ELSE
+        PRINT "This Employee ID does not exist yet. Adding it to the system."
+        PROMPT user for Employee Name using standardized input function
+        PROMPT user for Department Name using standardized input function
+        STORE results in employeeName and departmentName
+    END IF
+
+    PROMPT user for month and capitalize it
+    DEFINE valid_months as a list of month names
+    WHILE month is not in valid_months DO
+        PRINT "Invalid month. Please enter a valid month name."
+        PROMPT user again for month input and capitalize it
+    END WHILE
+
+    PROMPT user for year input
+    WHILE year is not a 4-digit number DO
+        PRINT "Invalid year. Please enter a 4-digit year."
+        PROMPT user again for year input
+    END WHILE
+    CONVERT year to integer
+
+    IF empID is not in payslips dictionary THEN
+        INITIALIZE empty dictionary for empID in payslips
+    END IF
+
+    IF year is not in payslips[empID] dictionary THEN
+        INITIALIZE empty dictionary for year in payslips[empID]
+    END IF
+
+    IF month exists in payslips[empID][year] THEN
+        PRINT "A payslip record for this month and year already exists."
+        PROMPT user for confirmation to update existing record
+        IF user input is 'yes' THEN
+            CALL updateEmployee procedure with empID, year, and month
+        ELSE
+            PRINT "No changes made. Returning to the main menu."
+        END IF
+        RETURN from procedure
+    END IF
+
+    PROMPT user for Basic Salary Amount and STORE in basicSalary
+    PROMPT user for Allowance Amount and STORE in allowance
+    PROMPT user for Bonus Amount and STORE in bonus
+    PROMPT user for Overtime Amount and STORE in overtime
+
+    CALCULATE net salary and related details using calculateNetSalary function
+    STORE result in salaryDetails
+
+    PROMPT user for confirmation to save new record
+    IF user input is not 'yes' THEN
+        PRINT "Employee data and salary details were not saved."
+        RETURN from procedure
+    END IF
+
+    IF empID is not in employees dictionary THEN
+        ADD new employee record with employeeName and departmentName to employees
+    END IF
+
+    ADD salaryDetails to payslips dictionary for empID, year, and month
+
+    CALL saveData procedure to persist data to JSON files
+
+    PRINT "Employee data has been successfully added and salary details saved."
+END PROCEDURE
+
+
+----------------------------------------PROCEDURE deleteEmployee------------------------------------
+
+PROCEDURE deleteEmployee()
+BEGIN
+    GLOBAL employees, payslips
+
+    PROMPT user for Employee ID using standardized input function and STORE in empID
+
+    IF empID exists in employees dictionary THEN
+        DELETE empID from employees dictionary
+        PRINT "Employee data for empID has been successfully deleted from the employees dictionary."
+        
+        IF empID exists in payslips dictionary THEN
+            DELETE empID from payslips dictionary
+            PRINT "Employee salary records for empID have been successfully deleted from the payslips dictionary."
+        ELSE
+            PRINT "No salary records found for empID in the payslips dictionary."
+        END IF
+
+        CALL saveData procedure to persist deletions to JSON files
+        PRINT "All changes have been successfully saved."
+    ELSE
+        PRINT "Employee ID does not exist!"
+    END IF
+END PROCEDURE
+
+
+----------------------------------------PROCEDURE viewEmployee--------------------------------------
+
+PROCEDURE viewEmployee()
+BEGIN
+    GLOBAL employees
+
+    IF employees dictionary is empty THEN
+        PRINT "No employee records found."
+        RETURN from procedure
+    END IF
+
+    CREATE PrettyTable object named employeeTable
+    SET column headers of employeeTable to ["Employee ID", "Name", "Department"]
+
+    FOR each empID, details in employees dictionary DO
+        ADD a row to employeeTable with empID, details['Employee Name'], and details['Department Name']
+    END FOR
+
+    PRINT "Employee Records:"
+    DISPLAY employeeTable
+END PROCEDURE
+
+
+--------------------------------------FUNCTION calculateNetSalary------------------------------------
+
+FUNCTION calculateNetSalary(basicSalary, allowance, bonus, overtime)
+BEGIN
+    CALCULATE grossSalary AS basicSalary + allowance + bonus + overtime
+
+    CALCULATE epfDeduction AS grossSalary * 0.11
+    CALCULATE salaryAfterEPF AS grossSalary - epfDeduction
+
+    SET additionalBonus TO 0
+    SET taxDeduction TO 0
+
+    IF salaryAfterEPF < 2000 THEN
+        CALCULATE additionalBonus AS salaryAfterEPF * 0.05
+    ELSE IF salaryAfterEPF > 3000 THEN
+        CALCULATE taxDeduction AS salaryAfterEPF * 0.06
+    END IF
+
+    CALCULATE netSalary AS salaryAfterEPF + additionalBonus - taxDeduction
+
+    RETURN dictionary WITH:
+        'Basic Salary' = basicSalary,
+        'Allowance' = allowance,
+        'Bonus' = bonus,
+        'Overtime' = overtime,
+        'Gross Salary' = grossSalary,
+        'EPF Deduction' = epfDeduction,
+        'Additional Bonus' = additionalBonus,
+        'Tax Deduction' = taxDeduction,
+        'Net Salary' = netSalary
+END FUNCTION
+
+
+--------------------------------------PROCEDURE generateNetSalary------------------------------------
+
+PROCEDURE generateNetSalary()
+BEGIN
+    GLOBAL employees
+
+    SET empID TO result of promptEmpIDInput("Enter Employee ID: ")
+
+    IF empID NOT IN employees THEN
+        PRINT "Employee ID not found. Please check and try again."
+        RETURN from procedure
+    END IF
+
+    SET month TO result of promptStringsInput("Enter Month (e.g., 'January', 'February'): ").capitalize()
+    DEFINE valid_months AS ['January', 'February', 'March', 'April', 'May', 'June', 
+                            'July', 'August', 'September', 'October', 'November', 'December']
+    WHILE month NOT IN valid_months DO
+        PRINT "Invalid month. Please enter a valid month name."
+        SET month TO result of promptStringsInput("Enter Month (e.g., 'January', 'February'): ").capitalize()
+    END WHILE
+
+    SET year_input TO input("Enter Year (e.g., 2023): ")
+    WHILE year_input is NOT a 4-digit number DO
+        PRINT "Invalid year. Please enter a 4-digit year."
+        SET year_input TO input("Enter Year (e.g., 2023): ")
+    END WHILE
+    CONVERT year_input TO integer and STORE in year
+
+    SET basicSalary TO result of promptFloatInput("Enter Basic Salary Amount: ")
+    SET allowance TO result of promptFloatInput("Enter Allowance Amount: ")
+    SET bonus TO result of promptFloatInput("Enter Bonus Amount: ")
+    SET overtime TO result of promptFloatInput("Enter Overtime Amount: ")
+
+    CALL calculateNetSalary(basicSalary, allowance, bonus, overtime) and STORE result in salaryDetails
+
+    PRINT "Calculated Salary Details:"
+    FOR each key, value IN salaryDetails DO
+        PRINT key and formatted value
+    END FOR
+
+    PRINT "Net salary calculation complete (data not saved)."
+END PROCEDURE
+
+
+----------------------------------PROCEDURE searchSpecificPayslip-----------------------------------
+
+PROCEDURE searchSpecificPayslip()
+BEGIN
+    GLOBAL payslips
+
+    WHILE TRUE DO
+        SET empID TO result of promptEmpIDInput("Enter Employee ID: ")
+
+        IF empID NOT IN payslips THEN
+            PRINT "No records found for this Employee ID."
+            SET retry TO input("Would you like to try again with a different Employee ID? (yes/no): ").strip().lower()
+            IF retry != 'yes' THEN
+                PRINT "Returning to the main menu."
+                RETURN from procedure
+            ELSE
+                CONTINUE to prompt for Employee ID again
+            END IF
+        END IF
+
+        SET month TO result of promptStringsInput("Enter Month (e.g., 'January', 'February'): ").capitalize()
+        DEFINE valid_months AS ['January', 'February', 'March', 'April', 'May', 'June', 
+                                'July', 'August', 'September', 'October', 'November', 'December']
+        
+        WHILE month NOT IN valid_months DO
+            PRINT "Invalid month. Please enter a valid month name (e.g., 'January')."
+            SET month TO result of promptStringsInput("Enter Month (e.g., 'January', 'February'): ").capitalize()
+        END WHILE
+
+        SET year_input TO input("Enter Year (e.g., 2023): ")
+        WHILE year_input is NOT a 4-digit number DO
+            PRINT "Invalid year. Please enter a 4-digit year."
+            SET year_input TO input("Enter Year (e.g., 2023): ")
+        END WHILE
+        CONVERT year_input TO integer and STORE in year
+
+        IF year NOT IN payslips[empID] OR month NOT IN payslips[empID][year] THEN
+            PRINT "No payslip record found for the specified month and year for Employee ID empID."
+            RETURN from procedure
+        END IF
+
+        SET payslip_details TO payslips[empID][year][month]
+
+        CREATE PrettyTable object named payslip_table
+        SET column headers of payslip_table to ["Detail", "Value"]
+        
+        FOR each key, value IN payslip_details DO
+            ADD row to payslip_table with key and formatted value
+        END FOR
+
+        PRINT "Payslip for Employee ID: empID for month and year"
+        DISPLAY payslip_table
+        RETURN from procedure
+    END WHILE
+END PROCEDURE
+
+
+--------------------------------------PROCEDURE viewAllPayslips---------------------------------------
+
+PROCEDURE viewAllPayslips()
+BEGIN
+    GLOBAL payslips
+
+    SET empID TO result of promptEmpIDInput("Enter Employee ID: ")
+
+    IF empID NOT IN payslips THEN
+        PRINT "No payslip records found for this Employee ID."
+        SET retry TO input("Would you like to try again with a different Employee ID? (yes/no): ").strip().lower()
+        IF retry != 'yes' THEN
+            PRINT "Returning to the main menu."
+            RETURN from procedure
+        ELSE
+            CALL viewAllPayslips() to retry with a different Employee ID
+        END IF
+    END IF
+
+    FOR each year IN sorted keys of payslips[empID] in descending order DO
+        SET months TO payslips[empID][year]
+
+        CREATE PrettyTable object named year_table
+        SET column headers of year_table to ["Month", "Basic Salary", "Allowance", "Bonus", "Overtime", 
+                                            "Gross Salary", "EPF Deduction", "Additional Bonus", "Tax Deduction", "Net Salary"]
+        
+        FOR each month, details IN months DO
+            ADD row to year_table with month and formatted values for each detail in details:
+                "Basic Salary", "Allowance", "Bonus", "Overtime", 
+                "Gross Salary", "EPF Deduction", "Additional Bonus", "Tax Deduction", "Net Salary"
+        END FOR
+
+        PRINT "Payslip Summary for Employee ID: empID for Year: year"
+        DISPLAY year_table
+    END FOR
+END PROCEDURE
+
+
+------------------------------------------PROCEDURE exit-------------------------------------------
+
+PROCEDURE exit()
+BEGIN
+    CALL saveData() to save any changes made to employees and payslips dictionaries
+
+    PRINT "Exiting the program."
+
+    RETURN from procedure
+END PROCEDURE
+
+
+-----------------------------------PROCEDURE empProfileSubMenu--------------------------------------
+
+PROCEDURE empProfileSubMenu()
+BEGIN
+    GLOBAL employees
+
+    WHILE TRUE DO
+        PRINT "\n------ Employee Profile ------"
+        PRINT "1. Add Employee"
+        PRINT "2. Update Employee"
+        PRINT "3. Delete Employee"
+        PRINT "4. View Employee List"
+        PRINT "5. Return to Main Menu"
+        
+        SET option TO input("Enter your choice: ")
+        
+        IF option == "1" THEN
+            CALL addEmployee()
+        
+        ELSE IF option == "2" THEN
+            CALL updateEmployee()
+        
+        ELSE IF option == "3" THEN
+            CALL deleteEmployee()
+        
+        ELSE IF option == "4" THEN
+            CALL viewEmployee()
+        
+        ELSE IF option == "5" THEN
+            BREAK from loop to return to Main Menu
+        
+        ELSE
+            PRINT "Choice is invalid. Try entering choice again."
+        END IF
+    END WHILE
+END PROCEDURE
+
+
+---------------------------------------PROCEDURE payslipSubMenu------------------------------------------
+
+PROCEDURE payslipSubMenu()
+BEGIN
+    WHILE TRUE DO
+        PRINT "\n*** Pay Slip ***"
+        PRINT "1. Search Specific Payslip"
+        PRINT "2. View All Payslips"
+        PRINT "3. Return to Main Menu"
+
+        SET choice TO input("Enter your choice: ")
+
+        IF choice == "1" THEN
+            CALL searchSpecificPayslip()
+        
+        ELSE IF choice == "2" THEN
+            CALL viewAllPayslips()
+        
+        ELSE IF choice == "3" THEN
+            BREAK from loop to return to Main Menu
+        
+        ELSE
+            PRINT "Invalid choice. Please try again."
+        END IF
+    END WHILE
+END PROCEDURE
+
+
+-------------------------------------------PROCEDURE mainMenu---------------------------------------------
+
+PROCEDURE mainMenu()
+BEGIN
+    CALL loadData() to load data from files into employees and payslips dictionaries
+
+    WHILE TRUE DO
+        PRINT "\n------- Main Menu -------"
+        PRINT "1. Employee Profile"
+        PRINT "2. Salary Generator"
+        PRINT "3. Payslip Profile"
+        PRINT "4. Exit"
+
+        SET option TO input("Enter your option: ")
+
+        IF option == "1" THEN
+            PRINT "Employee Profile has been chosen"
+            CALL empProfileSubMenu()
+        
+        ELSE IF option == "2" THEN
+            PRINT "Salary Generator has been chosen"
+            CALL generateNetSalary()
+        
+        ELSE IF option == "3" THEN
+            PRINT "Payslip Profile has been chosen"
+            CALL payslipSubMenu()
+        
+        ELSE IF option == "4" THEN
+            PRINT "Exiting program."
+            CALL exit()
+        
+        ELSE
+            PRINT "Choice is invalid. Try entering choice again."
+        END IF
+    END WHILE
+END PROCEDURE
